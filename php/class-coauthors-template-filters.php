@@ -15,15 +15,15 @@ class CoAuthors_Template_Filters {
 		add_action( 'rss2_item',  array( $this, 'action_add_rss_guest_authors' ) );
 	}
 
-	function filter_the_author() {
+	public static function filter_the_author() {
 		return coauthors( null, null, null, null, false );
 	}
 
-	function filter_the_author_posts_link() {
+	public static function filter_the_author_posts_link() {
 		return coauthors_posts_links( null, null, null, null, false );
 	}
 
-	function filter_the_author_rss( $the_author ) {
+	public static function filter_the_author_rss( $the_author ) {
 		if ( ! is_feed() || ! function_exists( 'coauthors' ) ) {
 			return $the_author;
 		}
@@ -36,7 +36,7 @@ class CoAuthors_Template_Filters {
 		}
 	}
 
-	function action_add_rss_guest_authors() {
+	public static function action_add_rss_guest_authors() {
 		$coauthors = get_coauthors();
 
 		// remove the first guest author who is added to the first dc:creator element
