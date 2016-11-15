@@ -999,7 +999,7 @@ class CoAuthors_Plus {
 
 		global $wp_query, $authordata;
 
-		if ( ! isset( $wp_query ) ) {
+		if ( ! $wp_query instanceof WP_Query ) {
 			return;
 		}
 
