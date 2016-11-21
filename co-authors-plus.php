@@ -100,8 +100,8 @@ class CoAuthors_Plus {
 		add_filter( 'wp_get_object_terms', array( $this, 'filter_wp_get_object_terms' ), 10, 4 );
 
 		// Make sure we've correctly set author data on author pages
-		add_filter( 'posts_selection', array( $this, 'fix_author_page' ) ); // use posts_selection since it's after WP_Query has built the request and before it's queried any posts
-		add_action( 'the_post', array( $this, 'fix_author_page' ) );
+		add_action( 'posts_request', array( $this, 'fix_author_page' ), 10, 2 );
+		add_action( 'the_post', array( $this, 'fix_author_page' ), 10, 2 );
 
 		// Support for Edit Flow's calendar and story budget
 		add_filter( 'ef_calendar_item_information_fields', array( $this, 'filter_ef_calendar_item_information_fields' ), 10, 2 );
@@ -995,21 +995,17 @@ class CoAuthors_Plus {
 	 *
 	 * Also, we have to do some hacky WP_Query modification for guest authors
 	 */
-	public function fix_author_page() {
+	public function fix_author_page( $request_or_post, $wp_query ) {
 
-		global $wp_query, $authordata;
-
-		if ( ! $wp_query instanceof WP_Query ) {
-			return;
-		}
+		global $authordata;
 
 		if ( ! is_author() ) {
-			return;
+			return $request_or_post;
 		}
 
 		$author_name = sanitize_title( get_query_var( 'author_name' ) );
 		if ( ! $author_name ) {
-			return;
+			return $request_or_post;
 		}
 
 		$author = $this->get_coauthor_by( 'user_nicename', $author_name );
@@ -1028,6 +1024,7 @@ class CoAuthors_Plus {
 			$wp_query->is_author = $wp_query->is_archive = false;
 			$wp_query->is_404 = false;
 		}
+		return $request_or_post;
 	}
 
 	/**
